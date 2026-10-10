@@ -10,6 +10,11 @@ export async function fetchDayReport(date) {
     getCurrencyRates(date),
   ])
 
+  console.log('------------');
+  console.log(firstSource)
+  console.log(secondSource)
+  console.log(currency)
+  console.log('------------');
   validateFirstSource(firstSource)
   validateSecondSource(secondSource)
   validateCurrencyRates(currency)

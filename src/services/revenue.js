@@ -9,11 +9,16 @@ export function calculateTotalRevenue(sourceTransactions, currency) {
     throw new Error('Currency rates are not available')
   }
 
-  // Складываем округлённые суммы строк в центах — итог совпадает с таблицей
-  const totalCents = sourceTransactions.reduce(
-    (acc, transaction) => acc + Math.round(calculateItemRevenue(transaction, currency) * 100),
-    0,
-  )
+  // Складываем округлённые суммы строк в центах только для оплаченных транзакций (status === 'paid')
+  const totalCents = sourceTransactions.reduce((acc, transaction) => {
+    if (typeof transaction === 'object') {
+      const status = String(transaction.status ?? transaction.type ?? '').toLowerCase()
+      if (status && status !== 'paid') {
+        return acc
+      }
+    }
+    return acc + Math.round(calculateItemRevenue(transaction, currency) * 100)
+  }, 0)
 
   return totalCents / 100
 }
@@ -62,6 +67,9 @@ function normalizeTransaction(raw, index, sourceId, currency) {
   const isString = typeof raw === 'string'
   const [amountPart, currencyPart] = isString ? raw.split(' ') : []
   const code = (isString ? currencyPart : raw.currency).toUpperCase()
+  const rawStatus = isString ? null : (raw.status ?? raw.type ?? null)
+  const status = rawStatus ? String(rawStatus).toLowerCase() : null
+  const isPaid = isString ? true : status === 'paid'
 
   return {
     id: `${sourceId}-${index + 1}`,
@@ -69,7 +77,8 @@ function normalizeTransaction(raw, index, sourceId, currency) {
     source: sourceId,
     amount: isString ? Number(amountPart) : raw.amount,
     currency: code,
-    status: isString ? null : (raw.type ?? null),
+    status,
+    isPaid,
     rate: getRate(currency, code),
     usd: calculateItemRevenue(raw, currency),
     raw,
@@ -77,8 +86,16 @@ function normalizeTransaction(raw, index, sourceId, currency) {
 }
 
 function summarize(transactions) {
-  const totalCents = transactions.reduce((acc, t) => acc + toCents(t.usd), 0)
-  return { transactions, count: transactions.length, total: fromCents(totalCents) }
+  // Выручка считается только по оплаченным транзакциям (status: 'paid')
+  const paidTransactions = transactions.filter((t) => t.isPaid)
+  const totalCents = paidTransactions.reduce((acc, t) => acc + toCents(t.usd), 0)
+  return {
+    transactions,
+    paidTransactions,
+    count: transactions.length,
+    paidCount: paidTransactions.length,
+    total: fromCents(totalCents),
+  }
 }
 
 function groupByCurrency(transactions) {
@@ -107,13 +124,16 @@ export function buildDayReport({ date, firstSource, secondSource, currency }) {
     secondSource.map((t, i) => normalizeTransaction(t, i, SOURCES.finance2.id, currency)),
   )
   const all = [...finance1.transactions, ...finance2.transactions]
+  const allPaid = [...finance1.paidTransactions, ...finance2.paidTransactions]
 
   return {
     date,
     sources: { finance1, finance2 },
     total: fromCents(toCents(finance1.total) + toCents(finance2.total)),
     count: all.length,
-    byCurrency: groupByCurrency(all),
+    paidCount: allPaid.length,
+    // В валютную аналитику и графики идут только оплаченные транзакции
+    byCurrency: groupByCurrency(allPaid),
     rates: currency.rates,
     ratesDate: currency.date ?? null,
     fetchedAt: Date.now(),

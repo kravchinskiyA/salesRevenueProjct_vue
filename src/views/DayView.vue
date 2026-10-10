@@ -4,7 +4,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { usePeriodStore } from '@/stores/period'
 import { useDayRevenue } from '@/composables/useRevenue'
 import { SOURCES } from '@/config/api'
-import { transactionsLabel } from '@/utils/format'
+import { transactionsLabel, statusLabel } from '@/utils/format'
 import { exportXlsx, exportCsv, dayReportToRows } from '@/utils/export'
 
 import DateSwitcher from '@/components/DateSwitcher.vue'
@@ -91,19 +91,10 @@ function handleExportPng() {
       </div>
 
       <div class="toolbar">
-        <DateSwitcher
-          mode="day"
-          :value="currentDate"
-          :max="period.today"
-          @change="handleDateChange"
-        />
+        <DateSwitcher mode="day" :value="currentDate" :max="period.today" @change="handleDateChange" />
 
-        <ExportMenu
-          :has-chart="Boolean(report)"
-          @export-xlsx="handleExportXlsx"
-          @export-csv="handleExportCsv"
-          @export-png="handleExportPng"
-        />
+        <ExportMenu :has-chart="Boolean(report)" @export-xlsx="handleExportXlsx" @export-csv="handleExportCsv"
+          @export-png="handleExportPng" />
       </div>
     </section>
 
@@ -137,7 +128,7 @@ function handleExportPng() {
             $ {{ report.sources.finance1.total }}
           </span>
           <span class="stat-card__meta" id="first-source-count">
-            {{ transactionsLabel(report.sources.finance1.count) }}
+            {{ report.sources.finance1.paidCount }} оплачено из {{ report.sources.finance1.count }}
           </span>
         </article>
 
@@ -177,7 +168,8 @@ function handleExportPng() {
             <table class="table" id="first-source-table">
               <thead>
                 <tr>
-                  <th>№ транзакции</th>
+                  <th>№</th>
+                  <th>Статус</th>
                   <th class="num">Сумма</th>
                   <th>Валюта</th>
                   <th class="num">Курс к USD</th>
@@ -186,27 +178,36 @@ function handleExportPng() {
               </thead>
               <tbody id="first-source-body">
                 <tr v-if="report.sources.finance1.transactions.length === 0">
-                  <td colspan="5" class="text-center">Транзакций нет</td>
+                  <td colspan="6" class="text-center">Транзакций нет</td>
                 </tr>
-                <tr
-                  v-for="item in report.sources.finance1.transactions"
-                  :key="item.id"
-                  class="clickable-row"
-                  title="Нажмите для просмотра подробностей"
-                  @click="openTransaction(item)"
-                >
+                <tr v-for="item in report.sources.finance1.transactions" :key="item.id" class="clickable-row"
+                  :class="{ 'row--unpaid': !item.isPaid }"
+                  :title="item.isPaid ? 'Нажмите для просмотра подробностей' : 'Транзакция не оплачена (не входит в выручку). Нажмите для деталей'"
+                  @click="openTransaction(item)">
                   <td class="mono">#{{ item.number }}</td>
+                  <td>
+                    <span class="badge badge--tag" :class="{
+                      'badge--success': item.status === 'paid',
+                      'badge--warning': item.status === 'pending',
+                      'badge--danger': item.status === 'rejected',
+                    }">
+                      {{ statusLabel(item.status) }}
+                    </span>
+                  </td>
                   <td class="num">{{ item.amount }}</td>
                   <td><span class="currency">{{ item.currency }}</span></td>
                   <td class="num">
                     {{ item.currency === 'USD' ? '1.000000' : report.rates[item.currency] }}
                   </td>
-                  <td class="num strong">{{ item.usd }}</td>
+                  <td class="num strong"
+                    :style="!item.isPaid ? 'color: var(--muted); text-decoration: line-through;' : ''">
+                    {{ item.usd }}
+                  </td>
                 </tr>
               </tbody>
               <tfoot>
                 <tr>
-                  <td colspan="4">Итого по источнику</td>
+                  <td colspan="5">Итого по источнику (оплачено)</td>
                   <td class="num" id="first-source-total">
                     {{ report.sources.finance1.total }}
                   </td>
@@ -228,7 +229,7 @@ function handleExportPng() {
             <table class="table" id="second-source-table">
               <thead>
                 <tr>
-                  <th>№ транзакции</th>
+                  <th>№</th>
                   <th class="num">Сумма</th>
                   <th>Валюта</th>
                   <th class="num">Курс к USD</th>
@@ -239,13 +240,8 @@ function handleExportPng() {
                 <tr v-if="report.sources.finance2.transactions.length === 0">
                   <td colspan="5" class="text-center">Транзакций нет</td>
                 </tr>
-                <tr
-                  v-for="item in report.sources.finance2.transactions"
-                  :key="item.id"
-                  class="clickable-row"
-                  title="Нажмите для просмотра подробностей"
-                  @click="openTransaction(item)"
-                >
+                <tr v-for="item in report.sources.finance2.transactions" :key="item.id" class="clickable-row"
+                  title="Нажмите для просмотра подробностей" @click="openTransaction(item)">
                   <td class="mono">#{{ item.number }}</td>
                   <td class="num">{{ item.amount }}</td>
                   <td><span class="currency">{{ item.currency }}</span></td>
@@ -270,9 +266,6 @@ function handleExportPng() {
     </template>
 
     <!-- Модальное окно деталей транзакции -->
-    <TransactionModal
-      :transaction="selectedTransaction"
-      @close="closeTransaction"
-    />
+    <TransactionModal :transaction="selectedTransaction" @close="closeTransaction" />
   </div>
 </template>
