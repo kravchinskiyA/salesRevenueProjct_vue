@@ -46,9 +46,12 @@ const formattedUpdate = computed(() => {
       >
         Выручка за месяц
       </router-link>
+      <router-link to="/sources" class="nav-link" :class="{ active: route.name === 'sources' }">
+        Источники данных
+      </router-link>
     </nav>
 
-    <div class="header__actions">
+    <div v-if="route.name !== 'sources'" class="header__actions">
       <div class="header__status">
         <span class="status-dot"></span>
         <span id="last-update">{{ formattedUpdate }}</span>

@@ -18,6 +18,11 @@ const router = createRouter({
       component: () => import('@/views/MonthView.vue'),
     },
     {
+      path: '/sources',
+      name: 'sources',
+      component: () => import('@/views/DataSourcesView.vue'),
+    },
+    {
       path: '/transaction/:source/:id',
       name: 'transaction',
       component: () => import('@/views/TransactionDetailView.vue'),
