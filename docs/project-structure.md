@@ -40,18 +40,25 @@
 
 ```
 hw3/salesRevenueProject/
-├── .agents/                          # Локальные правила и конфигурации ИИ-агентов
-│   └── rules/                        # Модульные правила (бизнес-логика, стек, кеш и т.д.)
-│       ├── architecture.md
-│       ├── business-logic.md
-│       ├── caching-state.md
-│       ├── code-standards.md
-│       ├── environment-and-scripts.md
-│       ├── project-overview.md
-│       └── tech-stack.md
+├── .agents/                          # Локальные правила, конфигурации и скиллы ИИ-агентов
+│   ├── rules/                        # Модульные правила (бизнес-логика, стек, кеш и т.д.)
+│   │   ├── architecture.md
+│   │   ├── business-logic.md
+│   │   ├── caching-state.md
+│   │   ├── code-standards.md
+│   │   ├── environment-and-scripts.md
+│   │   ├── project-overview.md
+│   │   └── tech-stack.md
+│   └── skills/                       # Рабочие процедуры и скиллы автоматизации
+│       └── financial-api-audit/      # Скилл аудита качества финансовых API
+│           ├── SKILL.md              # Руководство и манифест скилла
+│           ├── scripts/audit.js      # Скрипт проверки контрактов и генерации отчетов MD/PDF
+│           ├── references/           # Справочники правил аномалий
+│           └── examples/             # Примеры отчетов для backend команды
 ├── docs/                             # Проектная документация и история прогресса
 │   ├── project-structure.md          # Данный документ: описание структуры и слоев
 │   └── progress.md                   # Журнал выполненных задач и изменений
+├── reports/                          # Каталог сгенерированных отчетов аудита API (MD, PDF, JSON)
 ├── public/                           # Статические ресурсы (иконки, фавиконки)
 ├── src/                              # Исходный код приложения
 │   ├── api/                          # Сетевой транспортный слой
@@ -92,7 +99,7 @@ hw3/salesRevenueProject/
 ├── .env.local                        # Локальные переменные окружения (в .gitignore)
 ├── .markdownlint.json                # Конфигурация линтера markdown
 ├── index.html                        # HTML-контейнер Vite
-├── package.json                      # Зависимости и скрипты проекта
+├── package.json                      # Зависимости и скрипты проекта (включая audit:api)
 └── vite.config.js                    # Конфигурация сборщика Vite (алиас @ -> src)
 ```
 

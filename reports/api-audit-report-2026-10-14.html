@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <title>API Quality & Integrity Audit Report</title>
+  <style>
+    @page {
+      size: A4;
+      margin: 15mm 15mm 15mm 15mm;
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      color: #0f172a;
+      line-height: 1.5;
+      font-size: 12px;
+      margin: 0;
+      padding: 0;
+      background: #ffffff;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .header-banner {
+      border-bottom: 2px solid #e2e8f0;
+      padding-bottom: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .title-area h1 {
+      margin: 0 0 4px 0;
+      font-size: 18px;
+      color: #0f172a;
+    }
+    .title-area p {
+      margin: 0;
+      color: #64748b;
+      font-size: 11px;
+    }
+    .score-badge {
+      text-align: right;
+      padding: 6px 12px;
+      border-radius: 6px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+    }
+    .score-num {
+      font-size: 20px;
+      font-weight: 800;
+      color: #ef4444;
+    }
+    h2 {
+      font-size: 13px;
+      color: #0f172a;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 4px;
+      margin-top: 18px;
+      margin-bottom: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin-bottom: 15px;
+    }
+    .stat-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 8px 10px;
+    }
+    .stat-label {
+      font-size: 10px;
+      color: #64748b;
+      text-transform: uppercase;
+      font-weight: 600;
+    }
+    .stat-val {
+      font-size: 16px;
+      font-weight: 700;
+      margin-top: 2px;
+      color: #0f172a;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 15px;
+      font-size: 11px;
+    }
+    th, td {
+      border: 1px solid #cbd5e1;
+      padding: 6px 8px;
+      text-align: left;
+    }
+    th {
+      background-color: #f1f5f9;
+      font-weight: 600;
+      color: #334155;
+    }
+    .issue-card {
+      border: 1px solid #e2e8f0;
+      border-radius: 6px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      page-break-inside: avoid;
+    }
+    .issue-card.CRITICAL { border-left: 4px solid #ef4444; background: #fff5f5; }
+    .issue-card.WARNING { border-left: 4px solid #f59e0b; background: #fffbeb; }
+    .issue-card.INFO { border-left: 4px solid #3b82f6; background: #eff6ff; }
+    .issue-title {
+      font-weight: 700;
+      font-size: 12px;
+      margin-bottom: 4px;
+      color: #0f172a;
+    }
+    .badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 9px;
+      font-weight: 700;
+      text-transform: uppercase;
+      margin-right: 6px;
+    }
+    .badge.CRITICAL { background: #fee2e2; color: #991b1b; }
+    .badge.WARNING { background: #fef3c7; color: #92400e; }
+    .badge.INFO { background: #dbeafe; color: #1e40af; }
+    .issue-meta {
+      font-size: 11px;
+      color: #334155;
+      margin: 2px 0;
+    }
+    code {
+      font-family: ui-monospace, Menlo, Monaco, Consolas, monospace;
+      background: #f1f5f9;
+      padding: 1px 4px;
+      border-radius: 3px;
+      font-size: 10px;
+      color: #0f172a;
+    }
+    pre {
+      background: #0f172a;
+      color: #f8fafc;
+      padding: 8px;
+      border-radius: 4px;
+      font-size: 10px;
+      margin: 6px 0 2px 0;
+      overflow: hidden;
+    }
+  </style>
+</head>
+<body>
+  <div class="header-banner">
+    <div class="title-area">
+      <h1>Отчет по аудиту качества и контрактов API</h1>
+      <p>ShopAdmin Financial APIs Audit Configuration &bull; Дата: 14.10.2026, 20:50:47</p>
+    </div>
+    <div class="score-badge">
+      <div style="font-size: 9px; text-transform: uppercase; color: #64748b; font-weight: 600;">Data Health Score</div>
+      <div class="score-num">44 / 100</div>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Эндпоинты</div>
+      <div class="stat-val">2 активных</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Критичные дефекты</div>
+      <div class="stat-val" style="color: #ef4444;">0</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Замечания к контракту</div>
+      <div class="stat-val" style="color: #f59e0b;">28</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Всего сигналов</div>
+      <div class="stat-val">28</div>
+    </div>
+  </div>
+
+  <h2>1. Состояние сервисов</h2>
+  <table>
+    <thead>
+      <tr>
+        <th>Сервис / Эндпоинт</th>
+        <th>HTTP Код</th>
+        <th>Задержка</th>
+        <th>Объем выборки</th>
+        <th>Вердикт</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+            <td><strong>currency</strong></td>
+            <td><code>200</code></td>
+            <td>357 ms</td>
+            <td>1042 записей</td>
+            <td>🟢 В норме</td>
+          </tr><tr>
+            <td><strong>finance1</strong></td>
+            <td><code>200</code></td>
+            <td>192 ms</td>
+            <td>8 записей</td>
+            <td>🟡 Требует правок</td>
+          </tr><tr>
+            <td><strong>finance2</strong></td>
+            <td><code>200</code></td>
+            <td>75 ms</td>
+            <td>9 записей</td>
+            <td>🟡 Требует правок</td>
+          </tr>
+    </tbody>
+  </table>
+
+  <h2>2. Реестр выявленных аномалий для Backend команды</h2>
+  
+    <div class="issue-card WARNING">
+      <div class="issue-title">
+        <span class="badge WARNING">WARNING</span>
+        Обнаружены посторонние поля верхнего уровня: address 
+      </div>
+      <div class="issue-meta"><strong>Эндпоинт:</strong> <code>Источник 1 (/api/finance1)</code> | <strong>Код:</strong> <code>UNEXPECTED_ROOT_FIELDS</code></div>
+      <div class="issue-meta"><strong>Ожидалось:</strong> Только поля: transactions</div>
+      <div class="issue-meta"><strong>Факт сервера:</strong> Присутствуют: ["address"]</div>
+      <div class="issue-meta"><strong>Влияние:</strong> Загрязнение контракта, утечка нерелевантных персональных/адресных данных (PII).</div>
+      <div class="issue-meta"><strong>Решение:</strong> Удалить лишние данные или вынести их в соответствующий доменный эндпоинт.</div>
+      <pre><code>{"address":{"city":"New York","street":"5th Avenue","houseNumber":10}}</code></pre>
+    </div>
+    <div class="issue-card WARNING">
+      <div class="issue-title">
+        <span class="badge WARNING">WARNING</span>
+        В объекте отсутствует уникальный идентификатор "id" (finance1[0]) <em>(встретилось 8 раз)</em>
+      </div>
+      <div class="issue-meta"><strong>Эндпоинт:</strong> <code>Источник 1 (/api/finance1)</code> | <strong>Код:</strong> <code>MISSING_TRANSACTION_ID</code></div>
+      <div class="issue-meta"><strong>Ожидалось:</strong> Поле "id": number|string</div>
+      <div class="issue-meta"><strong>Факт сервера:</strong> Отсутствует</div>
+      <div class="issue-meta"><strong>Влияние:</strong> Фронтенд вынужден использовать индекс массива как ключ, что ломает реактивность и сортировку.</div>
+      <div class="issue-meta"><strong>Решение:</strong> Добавить первичный ключ в модель транзакции.</div>
+      <pre><code>{"type":"paid","amount":100,"currency":"USD"}
+{"type":"pending","amount":50,"currency":"USD"}</code></pre>
+    </div>
+    <div class="issue-card WARNING">
+      <div class="issue-title">
+        <span class="badge WARNING">WARNING</span>
+        Использовано устаревшее наименование поля "type" вместо "status" (finance1[0]) <em>(встретилось 8 раз)</em>
+      </div>
+      <div class="issue-meta"><strong>Эндпоинт:</strong> <code>Источник 1 (/api/finance1)</code> | <strong>Код:</strong> <code>FIELD_ALIAS_DEPRECATED</code></div>
+      <div class="issue-meta"><strong>Ожидалось:</strong> "status": "paid"</div>
+      <div class="issue-meta"><strong>Факт сервера:</strong> "type": "paid"</div>
+      <div class="issue-meta"><strong>Влияние:</strong> Рассинхронизация с доменной моделью клиента.</div>
+      <div class="issue-meta"><strong>Решение:</strong> Переименовать поле "type" в "status".</div>
+      <pre><code>{"type":"paid","amount":100,"currency":"USD"}
+{"type":"pending","amount":50,"currency":"USD"}</code></pre>
+    </div>
+    <div class="issue-card WARNING">
+      <div class="issue-title">
+        <span class="badge WARNING">WARNING</span>
+        Нестандартизированное значение статуса: "rejected" (finance1[4]) <em>(встретилось 2 раз)</em>
+      </div>
+      <div class="issue-meta"><strong>Эндпоинт:</strong> <code>Источник 1 (/api/finance1)</code> | <strong>Код:</strong> <code>NON_STANDARD_STATUS</code></div>
+      <div class="issue-meta"><strong>Ожидалось:</strong> Один из: paid, pending, failed, cancelled, refunded</div>
+      <div class="issue-meta"><strong>Факт сервера:</strong> "rejected"</div>
+      <div class="issue-meta"><strong>Влияние:</strong> Статус может некорректно классифицироваться логикой расчёта выручки.</div>
+      <div class="issue-meta"><strong>Решение:</strong> Стандартизировать статусы в соответствии с enum.</div>
+      <pre><code>{"type":"rejected","amount":560,"currency":"USD"}
+{"type":"rejected","amount":430,"currency":"EUR"}</code></pre>
+    </div>
+    <div class="issue-card WARNING">
+      <div class="issue-title">
+        <span class="badge WARNING">WARNING</span>
+        Код валюты передан в нижнем регистре: "usd" (finance2[0]) <em>(встретилось 9 раз)</em>
+      </div>
+      <div class="issue-meta"><strong>Эндпоинт:</strong> <code>Источник 2 (/api/finance2)</code> | <strong>Код:</strong> <code>LOWERCASE_CURRENCY_CODE</code></div>
+      <div class="issue-meta"><strong>Ожидалось:</strong> USD</div>
+      <div class="issue-meta"><strong>Факт сервера:</strong> usd</div>
+      <div class="issue-meta"><strong>Влияние:</strong> Нарушение ISO 4217, сбой чувствительного к регистру сопоставления с курсами.</div>
+      <div class="issue-meta"><strong>Решение:</strong> Всегда сериализовать коды валют в верхнем регистре (USD, EUR).</div>
+      <pre><code>300 usd
+200 eur</code></pre>
+    </div>
+</body>
+</html>

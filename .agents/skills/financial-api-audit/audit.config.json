@@ -1,0 +1,79 @@
+{
+  "title": "ShopAdmin Financial APIs Audit Configuration",
+  "version": "1.0.0",
+  "envFile": ".env.local",
+  "slaMsDefault": 1500,
+  "standardStatuses": ["paid", "pending", "failed", "cancelled", "refunded"],
+  "currencyService": {
+    "enabled": true,
+    "url": "${VITE_CURRENCY_BASE_URL:-https://api.currencyfreaks.com/v2.0/rates}/latest?apikey=${VITE_CURRENCY_API_KEY}"
+  },
+  "endpoints": [
+    {
+      "id": "finance1",
+      "name": "Источник 1 (/api/finance1)",
+      "url": "${VITE_SOURCES_BASE_URL:-https://cpa-server-vtel.onrender.com/api}/finance1",
+      "method": "GET",
+      "headers": {
+        "x-api-key": "${VITE_SOURCES_API_KEY}"
+      },
+      "authCheck": {
+        "enabled": true,
+        "description": "Проверка закрытости эндпоинта без x-api-key",
+        "expectedStatus": [401, 403]
+      },
+      "root": {
+        "type": "object",
+        "collectionProperty": "transactions",
+        "allowedProperties": ["transactions"]
+      },
+      "item": {
+        "type": "object",
+        "requireId": true,
+        "statusField": {
+          "preferred": "status",
+          "forbiddenAliases": ["type"]
+        },
+        "fields": {
+          "amount": {
+            "type": "number",
+            "positive": true,
+            "maxDecimals": 2
+          },
+          "currency": {
+            "type": "string",
+            "iso4217": true,
+            "requireUppercase": true,
+            "requireRateMatch": true
+          }
+        }
+      }
+    },
+    {
+      "id": "finance2",
+      "name": "Источник 2 (/api/finance2)",
+      "url": "${VITE_SOURCES_BASE_URL:-https://cpa-server-vtel.onrender.com/api}/finance2",
+      "method": "GET",
+      "headers": {
+        "x-api-key": "${VITE_SOURCES_API_KEY}"
+      },
+      "authCheck": {
+        "enabled": false
+      },
+      "root": {
+        "type": "array"
+      },
+      "item": {
+        "type": "string",
+        "pattern": "^([0-9.]+)\\s+([A-Za-z]+)$",
+        "parsedFields": {
+          "amountIndex": 1,
+          "currencyIndex": 2,
+          "positive": true,
+          "requireUppercase": true,
+          "requireRateMatch": true
+        }
+      }
+    }
+  ]
+}
